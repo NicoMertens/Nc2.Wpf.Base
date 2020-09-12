@@ -10,6 +10,8 @@
     <Product>Wpf</Product>
     <Copyright>Nc2</Copyright>
     <Description>Default implementations of ICommand, Converters e.g. BooleanConverters, BaseViewModel</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/NicoMertens/Nc2.Wpf.Base</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
