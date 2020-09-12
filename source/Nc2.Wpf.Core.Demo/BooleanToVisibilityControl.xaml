@@ -1,0 +1,88 @@
+﻿<UserControl x:Class="Nc2.Wpf.Base.Demo.BooleanToVisibilityControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:converters="clr-namespace:Nc2.Wpf.Base.Converters;assembly=Nc2.Wpf.Base"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToHiddenConverter"
+                                                 Invert="False"
+                                                 Collapsed="False"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToCollapsedConverter"
+                                                 Invert="False"
+                                                 Collapsed="True"/>
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToHiddenConverter"
+                                                 Invert="True"
+                                                 Collapsed="False"/>
+        <converters:BooleanToVisibilityConverter x:Key="InvertedBooleanToCollapsedConverter"
+                                                 Invert="True"
+                                                 Collapsed="True"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Content="BooleanToVisibiltyConverter" FontSize="20" />
+        <StackPanel Grid.Row="1"
+                    Margin="4">
+            <StackPanel Orientation="Horizontal">
+                <ToggleButton Content="Toggle"
+                              x:Name="VisibilityButton"
+                              Margin="2"
+                              Padding="8"
+                              VerticalAlignment="Center"/>
+                <Label Content="{Binding ElementName=VisibilityButton, Path=IsChecked}"
+                       Margin="2"
+                       Padding="4"
+                       Width="50"
+                       HorizontalContentAlignment="Center"
+                       VerticalAlignment="Center"/>
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border BorderBrush="Black"
+                                BorderThickness="1"
+                                Padding="4"
+                                Margin="2">
+                            <Label Content="BooleanToHiddenConverter" 
+                                   Visibility="{Binding ElementName=VisibilityButton, 
+                                                Path=IsChecked,
+                                                Converter={StaticResource BooleanToHiddenConverter}}" />
+                        </Border>
+                        <Border BorderBrush="Black"
+                                BorderThickness="1"
+                                Padding="4"
+                                Margin="2">
+                            <Label Content="BooleanToCollapsedConverter" 
+                               Visibility="{Binding ElementName=VisibilityButton, 
+                                            Path=IsChecked,
+                                            Converter={StaticResource BooleanToCollapsedConverter}}" />
+                        </Border>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Border BorderBrush="Black"
+                                BorderThickness="1"
+                                Padding="4"
+                                Margin="2">
+                            <Label Content="InvertedBooleanToHiddenConverter" 
+                               Visibility="{Binding ElementName=VisibilityButton, 
+                                            Path=IsChecked,
+                                            Converter={StaticResource InvertedBooleanToHiddenConverter}}" />
+                        </Border>
+                        <Border BorderBrush="Black"
+                                BorderThickness="1"
+                                Padding="4"
+                                Margin="2">
+                            <Label Content="InvertedBooleanToCollapsedConverter" 
+                               Visibility="{Binding ElementName=VisibilityButton, 
+                                            Path=IsChecked,
+                                            Converter={StaticResource InvertedBooleanToCollapsedConverter}}" />
+                        </Border>
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>               
+    </Grid>
+</UserControl>

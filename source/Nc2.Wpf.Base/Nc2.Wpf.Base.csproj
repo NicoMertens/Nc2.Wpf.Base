@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <OutputPath>..\..\_output\$(Configuration)\$(AssemblyName)</OutputPath>
+    <Authors>Nico Mertens</Authors>
+    <Company>Nc2</Company>
+    <Product>Wpf</Product>
+    <Copyright>Nc2</Copyright>
+    <Description>Default implementations of ICommand, Converters e.g. BooleanConverters, BaseViewModel</Description>
+  </PropertyGroup>
+
+</Project>
