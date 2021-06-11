@@ -7,20 +7,53 @@
     {
         public Command(Action<Object> executeAction, Func<Object, Boolean> canExecuteAction)
         {
+            ExecuteActionWithParameter = executeAction;
+            CanExecuteActionWithParameter = canExecuteAction;
+        }
+
+        public Command(Action executeAction, Func<Boolean> canExecuteAction)
+        {
             ExecuteAction = executeAction;
             CanExecuteAction = canExecuteAction;
         }
 
         public event EventHandler CanExecuteChanged;
 
-        private Action<Object> ExecuteAction { get; }
-        private Func<Object, Boolean> CanExecuteAction { get; }
+        private Action<Object> ExecuteActionWithParameter { get; }
+        private Func<Object, Boolean> CanExecuteActionWithParameter { get; }
 
-        public Boolean CanExecute(Object parameter) 
-            => CanExecuteAction?.Invoke(parameter) ?? true;
+        public Action ExecuteAction { get; }
+        public Func<Boolean> CanExecuteAction { get; }
 
-        public void Execute(Object parameter) 
-            => ExecuteAction?.Invoke(parameter);
+        public Boolean CanExecute(Object parameter)
+        {
+            if (CanExecuteAction is not null)
+            {
+                return CanExecuteAction.Invoke();
+            }
+
+            if (CanExecuteActionWithParameter is not null)
+            {
+                return CanExecuteActionWithParameter.Invoke(parameter);
+            }
+
+            return true;
+        }
+
+        public void Execute(Object parameter)
+        { 
+            if (ExecuteAction is not null)
+            {
+                ExecuteAction.Invoke();
+                return;
+            }
+
+            if (ExecuteActionWithParameter is not null)
+            {
+                ExecuteActionWithParameter.Invoke(parameter);
+                return;
+            }
+        }
 
         public void Invalidate()
         {
