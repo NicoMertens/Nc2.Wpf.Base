@@ -107,3 +107,9 @@
         // Trigger the CanExecuteEvent
         DoWhateverCommand.Invalidate();
     }
+
+# Deferred Command
+
+Executes a command after a timeout. Further calls replace the pending command.
+
+DeferredCommand = new DeferredCommand(TimeSpan.FromSeconds(3), DoWhatever, CanDoWhatever);
