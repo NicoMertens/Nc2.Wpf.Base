@@ -1,0 +1,23 @@
+<Project>
+    <PropertyGroup>
+        <BaseArtifactsPath>$(SolutionDir)..\_output\</BaseArtifactsPath>
+        <MSBuildProjectExtensionsPath>$(BaseArtifactsPath)obj\$(MSBuildProjectName)</MSBuildProjectExtensionsPath>
+        <BaseIntermediateOutputPath>$(BaseArtifactsPath)obj\$(MSBuildProjectName)</BaseIntermediateOutputPath>
+        <OutputPath>$(BaseArtifactsPath)$(Configuration)\$(MSBuildProjectName)</OutputPath>
+
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    </PropertyGroup>
+
+    <!-- https://github.com/dotnet/wpf/issues/2930 -->
+    <Target Name="RemoveWpfTemp" AfterTargets="Build">
+        <ItemGroup>
+            <WpfTempDirectories Include="$([System.IO.Directory]::GetDirectories(&quot;$(BaseArtifactsPath)$(Configuration)&quot;,&quot;$(MSBuildProjectName)_*_wpftmp&quot;))"/>
+        </ItemGroup>
+        <RemoveDir Directories="@(WpfTempDirectories)" />
+    </Target>
+
+    <Target Name="RemoveLegacyOutputFolder" AfterTargets="Clean">
+        <RemoveDir Directories="$(MSBuildProjectDirectory)\obj;$(MSBuildProjectDirectory)\bin" />
+    </Target>    
+</Project>
