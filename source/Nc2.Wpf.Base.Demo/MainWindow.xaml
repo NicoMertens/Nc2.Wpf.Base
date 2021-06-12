@@ -4,7 +4,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Nc2.Wpf.Base.Demo" 
-        xmlns:converters="clr-namespace:Nc2.Wpf.Base.Converters;assembly=SelectLine.Wpf.Core"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -17,6 +16,7 @@
             <local:BooleanToVisibilityControl />
             <local:BooleanToColorControl />
             <local:BooleanToFontWeightControl />
+            <local:DeferredCommandControl DataContext="{Binding DeferredCommandViewModel}" />
         </StackPanel>
     </Grid>
 </Window>

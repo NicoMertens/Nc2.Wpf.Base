@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30428.66
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nc2.Wpf.Base", "Nc2.Wpf.Base\Nc2.Wpf.Base.csproj", "{E463E0C2-B975-4588-91D1-E1C235B6E3F4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nc2.Wpf.Core.Tests", "Nc2.Wpf.Core.Tests\Nc2.Wpf.Core.Tests.csproj", "{1EB3D63C-65CC-47B9-AE84-8014600A121E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nc2.Wpf.Base.Tests", "Nc2.Wpf.Base.Tests\Nc2.Wpf.Base.Tests.csproj", "{1EB3D63C-65CC-47B9-AE84-8014600A121E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nc2.Wpf.Core.Demo", "Nc2.Wpf.Core.Demo\Nc2.Wpf.Core.Demo.csproj", "{3C43AF4F-3A0B-43C2-B49A-DB85E4B91DA2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nc2.Wpf.Base.Demo", "Nc2.Wpf.Base.Demo\Nc2.Wpf.Base.Demo.csproj", "{3C43AF4F-3A0B-43C2-B49A-DB85E4B91DA2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

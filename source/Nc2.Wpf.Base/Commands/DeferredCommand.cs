@@ -7,9 +7,10 @@
 
     public class DeferredCommand : ICommand
     {
-        public delegate Task ActionDelegate(CancellationToken cancellationToken);
+        public delegate Task ActionCallback(CancellationToken cancellationToken);
+        public delegate Boolean CanActionCallback();
 
-        public DeferredCommand(TimeSpan timeOut, ActionDelegate action, Func<Boolean> canAction = null)
+        public DeferredCommand(TimeSpan timeOut, ActionCallback action, CanActionCallback canAction = null)
         {
             TimeOut = timeOut;
             Action = action;
@@ -17,11 +18,20 @@
         }
 
         public event EventHandler CanExecuteChanged;
+        public event EventHandler CommandExecuting;
+        public event EventHandler CommandExecuted;
+        public event EventHandler<Exception> ExceptionThrowed;
 
         public TimeSpan TimeOut { get; }
-        public ActionDelegate Action { get; }
-        public Func<Boolean> CanAction { get; }
-        private ContextSource Context { get; set; }
+        public ActionCallback Action { get; }
+        public CanActionCallback CanAction { get; }
+        public Boolean IsRunning => ExecutingCounter > 0;
+        private CancellationTokenSource CancellationTokenSource { get; set; }
+        
+
+        private Object ContextLock { get; } = new Object();
+        private Object ExecutingCounterLock { get; } = new Object();
+        private Int32 ExecutingCounter { get; set; }
 
         public void Invalidate()
         {
@@ -35,72 +45,114 @@
 
         public async void Execute(Object parameter)
         {
-            if (Action is null)
+            if (Action is null || !CanExecute(parameter))
             {
                 return;
             }
 
-            var context = Context;
-            if (context is not null)
+            try
             {
-                context.Cancel();
-            }
-
-            using (Context = context = new ContextSource())
-            {
+                IncrementExecutionCounter();
+                var localContext = CreateContext();
                 try
                 {
-                    await Task.Delay(TimeOut, context.Token);
-                    if (context.Token.IsCancellationRequested)
+                    await Task.Delay(TimeOut, localContext.Token).ContinueWith(task => { }); // ContinueWith avoids TaskCancelledException
+                    if (!localContext.Token.IsCancellationRequested)
                     {
-                        return;
+                        await Action.Invoke(localContext.Token);
                     }
-
-                    await Action.Invoke(context.Token);
                 }
-                catch
+                finally
                 {
-                    // DO NOTHING
+                    DisposeContext(localContext);
+                }
+            }
+            catch (Exception exception)
+            {
+                if (exception is not TaskCanceledException)
+                {
+                    OnExceptionThrowed(exception);
+                }
+            }
+            finally
+            {
+                DecrementExecutionCounter();
+            }
+        }
+
+        public void Cancel()
+        {
+            lock (ContextLock)
+            {
+                if (CancellationTokenSource is not null)
+                {
+                    CancellationTokenSource.Cancel();
                 }
             }
         }
 
-        public class ContextSource : IDisposable
+        private CancellationTokenSource CreateContext()
         {
-            public ContextSource()
+            lock (ContextLock)
             {
-                CancellationTokenSource = new CancellationTokenSource();
-            }
-
-            private CancellationTokenSource CancellationTokenSource { get; set; }
-            public CancellationToken Token => CancellationTokenSource.Token;
-            public Boolean IsRunning => CancellationTokenSource is not null;
-
-            public void Cancel()
-            {
-                if (IsRunning)
+                if (CancellationTokenSource is not null)
                 {
-                    lock (CancellationTokenSource)
-                    {
-                        if (IsRunning)
-                        {
-                            CancellationTokenSource.Cancel();
-                        }
-                    }
+                    CancellationTokenSource.Cancel();
+                }
+
+                return CancellationTokenSource = new CancellationTokenSource();
+            }
+        }
+
+        private void DisposeContext(CancellationTokenSource cancellationTokenSouce)
+        {
+            lock (ContextLock)
+            {
+                cancellationTokenSouce.Dispose();
+                if (CancellationTokenSource == cancellationTokenSouce)
+                {
+                    CancellationTokenSource = null;
                 }
             }
+        }
 
-            public void Dispose()
+        private void IncrementExecutionCounter()
+        {
+            lock (ExecutingCounterLock)
             {
-                if (IsRunning)
+                ExecutingCounter++;
+                if (ExecutingCounter == 1)
                 {
-                    lock (CancellationTokenSource)
-                    {
-                        CancellationTokenSource.Dispose();
-                        CancellationTokenSource = null;
-                    }
+                    OnCommandExecuting();
                 }
             }
+        }
+
+        private void DecrementExecutionCounter()
+        {
+            lock (ExecutingCounterLock)
+            {
+                ExecutingCounter--;
+                if (ExecutingCounter == 0)
+                {
+                    OnCommandExecuted();
+                }
+            }
+        }
+
+        protected virtual void OnCommandExecuting()
+        {
+            CommandExecuting?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnCommandExecuted()
+        {
+            CommandExecuted?.Invoke(this, EventArgs.Empty);
+        }
+
+        protected virtual void OnExceptionThrowed(Exception exception)
+        {
+            ExceptionThrowed?.Invoke(this, exception);
         }
     }
 }
