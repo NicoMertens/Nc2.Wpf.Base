@@ -12,7 +12,7 @@
     <Description>Default implementations of ICommand, Converters e.g. BooleanConverters, BaseViewModel</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/NicoMertens/Nc2.Wpf.Base</PackageProjectUrl>
-    <Version>2.0.0</Version>
+    <Version>2.1.0</Version>
   </PropertyGroup>
 
 </Project>
